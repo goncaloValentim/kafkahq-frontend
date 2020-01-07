@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import logo from '../images/logo.svg'
 
+// Adaptation of login.ftl
+
 class Login extends Component {
     render() {
         return (
