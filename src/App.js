@@ -11,7 +11,8 @@ function App() {
         <Router>
             <Switch>
                 <Route path="/login" component={Login}/>
-                <Route path="/:clusterId/:tab" component={Dashboard}/>
+                <Route path="/:clusterId/:tab" exact component={Dashboard}/>
+                <Route path="/:clusterId/:tab/:action" exact component={Dashboard}/>
                 <Redirect from="/:clusterId" exact to="/:clusterId/topic"/>
             </Switch>
         </Router>

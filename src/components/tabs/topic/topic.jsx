@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Header from "../common/header";
+import Header from "../../common/header";
 
 // Adaptation of topic.ftl
 

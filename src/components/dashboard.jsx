@@ -7,48 +7,79 @@ import Group from "./tabs/group";
 import Acls from "./tabs/acls";
 import Connect from "./tabs/connect";
 import Schema from "./tabs/schema";
-import TopicList from "./tabs/topicList";
+import TopicList from "./tabs/topic/topicList";
+import TopicCreate from "./tabs/topic/topicCreate";
 
 class Dashboard extends Component {
     state = {
         clusterId: '',
         selectedTab: 'cluster', //cluster | node | topic | tail | group | acls | schema | connect
+        action: ''
     };
 
     static getDerivedStateFromProps(nextProps, prevState) {
         const clusterId = nextProps.match.params.clusterId;
         const selectedTab = nextProps.match.params.tab;
+        const action = nextProps.match.params.action;
 
-        return {clusterId: clusterId, selectedTab: selectedTab};
+        return {clusterId: clusterId, selectedTab: selectedTab, action: action};
     }
 
-    renderSelectedTab = () => {
+    renderSelectedTab = (data) => {
+        console.log('Render tab');
         const {selectedTab} = this.state;
 
         switch (selectedTab) {
             case 'cluster':
-                return <Cluster/>;
+                return <Cluster data={data}/>;
             case 'node':
-                return <Node/>;
+                return <Node data={data}/>;
             case 'topic':
-                return <TopicList/>;
+                return <TopicList data={data}/>;
             case 'tail':
-                return <Tail/>;
+                return <Tail data={data}/>;
             case 'group':
-                return <Group/>;
+                return <Group data={data}/>;
             case 'acls':
-                return <Acls/>;
+                return <Acls data={data}/>;
             case 'schema':
-                return <Schema/>;
+                return <Schema data={data}/>;
             case 'connect':
-                return <Connect/>;
+                return <Connect data={data}/>;
             default:
-                return <Cluster/>;
+                return <Cluster data={data}/>;
+        }
+    };
+
+    renderActionTab = () => {
+        console.log('Render action');
+        const {clusterId, selectedTab, action} = this.state;
+
+        // eslint-disable-next-line default-case
+        switch (selectedTab) {
+            case 'topic':
+                // eslint-disable-next-line default-case
+                switch (action) {
+                    case 'create':
+                        return <TopicCreate clusterId={clusterId}/>;
+                }
+            case 'node':
+                break;
+            case 'tail':
+                break;
+            case 'group':
+                break;
+            case 'acls':
+                break;
+            case 'schema':
+                break;
+            case 'connect':
+                break;
         }
     };
 
     render() {
-        const {selectedTab, clusterId} = this.state;
+        const {selectedTab, clusterId, action} = this.state;
 
         return (
             <React.Fragment>
@@ -56,7 +87,7 @@ class Dashboard extends Component {
                     selectedTab={selectedTab}
                     clusterId={clusterId}
                 />
-                {this.renderSelectedTab()}
+                {action !== undefined ? this.renderActionTab() : this.renderSelectedTab({clusterId})}
             </React.Fragment>
         );
     }
