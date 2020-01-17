@@ -41,5 +41,6 @@
   },
   "devDependencies": {
     "joi-browser": "^13.4.0"
-  }
+  },
+  "homepage": "https://parmarques.gitlab.io/kafkahq-frontend/"
 }
