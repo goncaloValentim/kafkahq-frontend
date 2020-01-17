@@ -2,15 +2,17 @@ import React from 'react';
 import Form from '../../common/form/form';
 import Joi from 'joi-browser';
 import Header from "../../common/header";
+import {withRouter} from 'react-router-dom';
+import {saveTopic} from "../../../services/fakeTopicService";
 
 class TopicCreate extends Form {
     state = {
         formData: {
             name: '',
-            partition: 1,
-            replication: 1,
-            cleanup: 'delete',
-            retention: 86400000
+            partition: 0,
+            replication: 0,
+            cleanup: '',
+            retention: 0
         },
         errors: {}
     };
@@ -23,6 +25,10 @@ class TopicCreate extends Form {
         retention: Joi.number().label('Retention')
     };
 
+    componentDidMount() {
+        this.setState({formData: this.props.location.state.formData})
+    }
+
     onCleanupChange = value => {
         let {formData} = {...this.state};
         formData.cleanup = value;
@@ -30,28 +36,36 @@ class TopicCreate extends Form {
         this.setState({formData});
     };
 
-    doSubmit = () => {
+    doSubmit () {
         const {formData} = this.state;
         const {clusterId} = this.props;
         const topic = {}; // || topicService.getTopic(clusterId, topicId)
 
+        topic.clusterId = clusterId;
         topic.name = formData.name;
         topic.partition = formData.partition;
         topic.replication = formData.replication;
         topic.cleanup = formData.cleanup;
         topic.retention = formData.retention;
 
-        // topicService.saveTopic(clusterId)
+        saveTopic(topic);
+        this.props.history.push({
+            pathname: `/${clusterId}/topic`,
+            showSuccessToast: true,
+            successToastMessage: `Topic '${topic.name}' is created`
+        });
     };
 
     render() {
         return (
             <div id="content">
-                <form encType="multipart/form-data" className="khq-form khq-form-config" onSubmit={this.handleSubmit}>
+                <form encType="multipart/form-data" className="khq-form khq-form-config"
+                      onSubmit={() => this.doSubmit()}>
                     <Header title="Create a topic"/>
                     {this.renderInput('name', 'Name', 'Name')}
                     {this.renderInput('partition', 'Partition', 'Partition', 'number')}
-                    {this.renderInput('replication', 'Replicator Factor', 'Replicator Factor', 'number')}
+                    {this.renderInput('replication', 'Replicator Factor', 'Replicator Factor',
+                        'number')}
                     {this.renderRadioGroup('cleanup', 'Cleanup Policy', [
                         'Delete',
                         'Compact',
@@ -59,11 +73,18 @@ class TopicCreate extends Form {
                     ], this.onCleanupChange)}
                     {this.renderInput('retention', 'Retention', 'Retention', 'number')}
 
-                    {this.renderButton('Create')}
+                    {this.renderButton('Create', undefined, undefined, 'submit')}
+                    {/*<Modal show={this.state.showConfirmModal} handleClose={this.hideConfirmModal}>*/}
+                    {/*    <p>Modal</p>*/}
+                    {/*    <p>Data</p>*/}
+                    {/*</Modal>*/}
+                    {/*<button type="button" onClick={this.showConfirmModal}>*/}
+                    {/*    Create*/}
+                    {/*</button>*/}
                 </form>
             </div>
         );
     }
 }
 
-export default TopicCreate;
+export default withRouter(TopicCreate);

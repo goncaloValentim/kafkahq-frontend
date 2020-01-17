@@ -4,14 +4,15 @@ class RadioGroup extends Component {
     renderOptions = (items, handleChange) => {
         let renderedItems = [];
         for (let item of items) {
-            renderedItems[renderedItems.length] =
+            renderedItems.push(
                 <div key={item.value} className="form-check">
                     <input className="form-check-input" type="radio" name={item.name}
                            id={item.value} value={item.value} defaultChecked={item.checked} onChange={() => handleChange(item.value)}/>
                     <label className="form-check-label" htmlFor={item.name}>
                         {item.label}
                     </label>
-                </div>;
+                </div>
+            );
         }
 
         return renderedItems;

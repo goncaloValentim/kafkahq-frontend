@@ -57,13 +57,14 @@ class Form extends Component {
         this.setState({formData, errors});
     };
 
-    renderButton = label => {
+    renderButton = (label, click, className, type) => {
         return (
             <div className="khq-submit">
                 <button
-                    type="submit"
-                    className="btn btn-primary"
+                    type={type ? type : "button"}
+                    className={className ? className : "btn btn-primary"}
                     disabled={this.validate()}
+                    onClick={click}
                 >
                     {label}
                 </button>

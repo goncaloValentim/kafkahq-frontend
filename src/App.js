@@ -6,8 +6,6 @@ import Login from "./components/login";
 
 function App() {
     return (
-        // <Dashboard/>
-        // <Login/>
         <Router>
             <Switch>
                 <Route path="/login" component={Login}/>

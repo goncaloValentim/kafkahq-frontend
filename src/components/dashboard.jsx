@@ -9,50 +9,83 @@ import Connect from "./tabs/connect";
 import Schema from "./tabs/schema";
 import TopicList from "./tabs/topic/topicList";
 import TopicCreate from "./tabs/topic/topicCreate";
+import SuccessToast from "./common/toast/successToast";
 
 class Dashboard extends Component {
     state = {
         clusterId: '',
         selectedTab: 'cluster', //cluster | node | topic | tail | group | acls | schema | connect
-        action: ''
+        action: '',
+        showSuccessToast: false,
+        successToastMessage: '',
+        successToastTimeout: 10000, // in ms
     };
 
     static getDerivedStateFromProps(nextProps, prevState) {
         const clusterId = nextProps.match.params.clusterId;
         const selectedTab = nextProps.match.params.tab;
         const action = nextProps.match.params.action;
+        const {showSuccessToast, successToastMessage} = nextProps.location;
 
-        return {clusterId: clusterId, selectedTab: selectedTab, action: action};
+        return {
+            clusterId: clusterId,
+            selectedTab: selectedTab,
+            action: action,
+            showSuccessToast: showSuccessToast,
+            successToastMessage: successToastMessage
+        };
     }
 
+    componentDidMount() {
+        this.checkToasts();
+    }
+
+    componentWillUnmount() {
+        clearTimeout(this.interval);
+    }
+
+    checkToasts = () => {
+        const {clusterId} = this.state;
+
+        if (this.state.showSuccessToast) {
+            this.interval = setTimeout(() => {
+                this.props.history.push({
+                    pathname: `/${clusterId}/topic`,
+                    showSuccessToast: false,
+                    successToastMessage: ''
+                });
+            }, this.state.successToastTimeout);
+        }
+    };
+
     renderSelectedTab = (data) => {
-        console.log('Render tab');
         const {selectedTab} = this.state;
+
+        this.checkToasts();
 
         switch (selectedTab) {
             case 'cluster':
-                return <Cluster data={data}/>;
+                return <Cluster data={data} history={this.props.history}/>;
             case 'node':
-                return <Node data={data}/>;
+                return <Node data={data} history={this.props.history}/>;
             case 'topic':
-                return <TopicList data={data}/>;
+                return <TopicList data={data} history={this.props.history}/>;
             case 'tail':
-                return <Tail data={data}/>;
+                return <Tail data={data} history={this.props.history}/>;
             case 'group':
-                return <Group data={data}/>;
+                return <Group data={data} history={this.props.history}/>;
             case 'acls':
-                return <Acls data={data}/>;
+                return <Acls data={data} history={this.props.history}/>;
             case 'schema':
-                return <Schema data={data}/>;
+                return <Schema data={data} history={this.props.history}/>;
             case 'connect':
-                return <Connect data={data}/>;
+                return <Connect data={data} history={this.props.history}/>;
             default:
-                return <Cluster data={data}/>;
+                return <Cluster data={data} history={this.props.history}/>;
         }
     };
 
     renderActionTab = () => {
-        console.log('Render action');
         const {clusterId, selectedTab, action} = this.state;
 
         // eslint-disable-next-line default-case
@@ -79,10 +112,11 @@ class Dashboard extends Component {
     };
 
     render() {
-        const {selectedTab, clusterId, action} = this.state;
+        const {selectedTab, clusterId, action, showSuccessToast, successToastMessage} = this.state;
 
         return (
             <React.Fragment>
+                <SuccessToast show={showSuccessToast} message={successToastMessage}/>
                 <Sidebar
                     selectedTab={selectedTab}
                     clusterId={clusterId}

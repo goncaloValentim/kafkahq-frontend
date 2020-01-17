@@ -1,12 +1,15 @@
 import React from 'react';
 
-function Header({title}) {
+function Header({title, children}) {
     return (
-        <div className="title">
-            <h1>
-                {title}
-            </h1>
-        </div>
+        <span>
+            <div className="title">
+                <h1>
+                    {title}
+                </h1>
+                {children}
+            </div>
+        </span>
     );
 }
 
