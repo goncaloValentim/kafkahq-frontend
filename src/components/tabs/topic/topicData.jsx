@@ -19,9 +19,11 @@ class TopicData extends Component {
         let renderedOptions = [];
         for (let option of sortOptions) {
             renderedOptions.push(
-                <Link key={option} className="dropdown-item" to="#">
-                    <i className="fa fa-fw fa-sort-numeric-desc" aria-hidden="true"/> option
-                </Link>
+                <div>
+                    <Link key={option} className="dropdown-item" to="#">
+                        <i className="fa fa-fw fa-sort-numeric-desc" aria-hidden="true"/> option
+                    </Link>
+                </div>
             );
         }
         return renderedOptions;
@@ -53,7 +55,6 @@ class TopicData extends Component {
                             <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle"
                                       to="#"
-                                      role="button"
                                       data-toggle="dropdown"
                                       aria-haspopup="true"
                                       aria-expanded="false">
