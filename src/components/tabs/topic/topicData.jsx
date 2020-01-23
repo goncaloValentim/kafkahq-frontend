@@ -21,7 +21,7 @@ class TopicData extends Component {
             renderedOptions.push(
                 <div>
                     <Link key={option} className="dropdown-item" to="#">
-                        <i className="fa fa-fw fa-sort-numeric-desc" aria-hidden="true"/> option
+                        <i className="fa fa-fw fa-sort-numeric-desc" aria-hidden="true"/> options
                     </Link>
                 </div>
             );
