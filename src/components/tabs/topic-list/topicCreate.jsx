@@ -36,7 +36,7 @@ class TopicCreate extends Form {
         this.setState({formData});
     };
 
-    doSubmit () {
+    doSubmit() {
         const {formData} = this.state;
         const {clusterId} = this.props;
         const topic = {}; // || topicService.getTopic(clusterId, topicId)
@@ -48,12 +48,22 @@ class TopicCreate extends Form {
         topic.cleanup = formData.cleanup;
         topic.retention = formData.retention;
 
-        saveTopic(topic);
-        this.props.history.push({
-            pathname: `/${clusterId}/topic`,
-            showSuccessToast: true,
-            successToastMessage: `Topic '${topic.name}' is created`
-        });
+        const response = saveTopic(topic);
+
+        if (response.error) {
+            this.props.history.push({
+                pathname: `/${clusterId}/topic`,
+                showErrorToast: true,
+                errorToastTitle: response.error.title,
+                errorToastMessage: response.error.message
+            });
+        } else {
+            this.props.history.push({
+                pathname: `/${clusterId}/topic`,
+                showSuccessToast: true,
+                successToastMessage: `Topic '${topic.name}' is created`
+            });
+        }
     };
 
     render() {

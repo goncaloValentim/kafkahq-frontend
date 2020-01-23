@@ -7,32 +7,50 @@ import Group from "./tabs/group";
 import Acls from "./tabs/acls";
 import Connect from "./tabs/connect";
 import Schema from "./tabs/schema";
-import TopicList from "./tabs/topic/topicList";
-import TopicCreate from "./tabs/topic/topicCreate";
+import TopicList from "./tabs/topic-list/topicList";
+import TopicCreate from "./tabs/topic-list/topicCreate";
 import SuccessToast from "./common/toast/successToast";
+import ErrorToast from "./common/toast/errorToast";
+import Topic from "./tabs/topic/topic";
 
 class Dashboard extends Component {
     state = {
         clusterId: '',
+        topicId: '',
         selectedTab: 'cluster', //cluster | node | topic | tail | group | acls | schema | connect
         action: '',
         showSuccessToast: false,
         successToastMessage: '',
         successToastTimeout: 10000, // in ms
+        showErrorToast: false,
+        errorToastTitle: '',
+        errorToastMessage: '',
+        errorToastTimeout: 6000 // in ms
     };
 
     static getDerivedStateFromProps(nextProps, prevState) {
         const clusterId = nextProps.match.params.clusterId;
+        const topicId = nextProps.match.params.topicId;
         const selectedTab = nextProps.match.params.tab;
         const action = nextProps.match.params.action;
-        const {showSuccessToast, successToastMessage} = nextProps.location;
+        const {
+            showSuccessToast,
+            successToastMessage,
+            showErrorToast,
+            errorToastTitle,
+            errorToastMessage
+        } = nextProps.location;
 
         return {
+            topicId: topicId,
             clusterId: clusterId,
             selectedTab: selectedTab,
             action: action,
             showSuccessToast: showSuccessToast,
-            successToastMessage: successToastMessage
+            successToastMessage: successToastMessage,
+            showErrorToast: showErrorToast,
+            errorToastTitle: errorToastTitle,
+            errorToastMessage: errorToastMessage
         };
     }
 
@@ -55,6 +73,17 @@ class Dashboard extends Component {
                     successToastMessage: ''
                 });
             }, this.state.successToastTimeout);
+        }
+
+        if (this.state.showErrorToast) {
+            this.interval = setTimeout(() => {
+                this.props.history.push({
+                    pathname: `/${clusterId}/topic`,
+                    showErrorToast: false,
+                    errorToastTitle: '',
+                    errorToastMessage: ''
+                });
+            }, this.state.errorToastTimeout);
         }
     };
 
@@ -91,10 +120,11 @@ class Dashboard extends Component {
         // eslint-disable-next-line default-case
         switch (selectedTab) {
             case 'topic':
-                // eslint-disable-next-line default-case
                 switch (action) {
                     case 'create':
                         return <TopicCreate clusterId={clusterId}/>;
+                    default:
+                        return <Topic clusterId={clusterId} topicId={action}/>;
                 }
             case 'node':
                 break;
@@ -112,16 +142,27 @@ class Dashboard extends Component {
     };
 
     render() {
-        const {selectedTab, clusterId, action, showSuccessToast, successToastMessage} = this.state;
+        const {
+            selectedTab,
+            topicId,
+            clusterId,
+            action,
+            showSuccessToast,
+            successToastMessage,
+            showErrorToast,
+            errorToastTitle,
+            errorToastMessage
+        } = this.state;
 
         return (
             <React.Fragment>
                 <SuccessToast show={showSuccessToast} message={successToastMessage}/>
+                <ErrorToast show={showErrorToast} title={errorToastTitle} message={errorToastMessage}/>
                 <Sidebar
                     selectedTab={selectedTab}
                     clusterId={clusterId}
                 />
-                {action !== undefined ? this.renderActionTab() : this.renderSelectedTab({clusterId})}
+                {action !== undefined ? this.renderActionTab() : this.renderSelectedTab({clusterId, topicId})}
             </React.Fragment>
         );
     }

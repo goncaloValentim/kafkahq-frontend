@@ -111,7 +111,7 @@ class TopicList extends Tab {
                     <td className="khq-row-action khq-row-action-main">
                         {/*    <a href="${basePath}/${clusterId}/topic/${topic.getName()}${roles?seq_contains("*/}
                         {/*topic/data/read")?then("", "/partitions")}" */}
-                        <Link to="#"
+                        <Link to={`/${clusterId}/topic/${topic.name}`}
                         ><i className="fa fa-search"/></Link>
                     </td>
                     {/*<#if canDelete == true>*/}
