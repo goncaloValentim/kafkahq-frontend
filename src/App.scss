@@ -25,6 +25,9 @@
 @import "assets/modules/templates/login.scss";
 @import "assets/modules/templates/sidebar.scss";
 
+// bootstrap
+@import "../node_modules/bootstrap/dist/css/bootstrap.css";
+
 .App {
   text-align: center;
 }

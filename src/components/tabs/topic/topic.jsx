@@ -35,11 +35,11 @@ class Topic extends Component {
     };
 
     renderSelectedTab() {
-        const {selectedTab} = this.state;
+        const {selectedTab, topic} = this.state;
 
         switch (selectedTab) {
             case 'data':
-                return <TopicData/>;
+                return <TopicData topic={topic}/>;
             case 'partitions':
                 return <TopicPartitions/>;
             case 'groups':

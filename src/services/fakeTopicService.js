@@ -32,12 +32,9 @@ export function getTopicByName(clusterId, name) {
 }
 
 export function saveTopic(topic) {
-    let savedTopic = getTopic(topic.clusterId, topic._id) || {};
-    const topicExists = getTopicByName(topic.clusterId, topic.name);
-    console.log(savedTopic);
+    let savedTopic = getTopicByName(topic.clusterId, topic.name) || {};
 
-    if (!savedTopic._id && topicExists) {
-        console.log('exists');
+    if (typeof savedTopic._id !== "undefined") {
         return {
             error: {
                 title: `Failed to create topic '${topic.name}'`,
@@ -61,8 +58,10 @@ export function saveTopic(topic) {
     return savedTopic;
 }
 
-export function deleteTopic(clusterId, id) {
-    let savedTopic = getTopic(clusterId, id);
+export function deleteTopic(clusterId, name) {
+    let savedTopic = getTopicByName(clusterId, name);
+    console.log(savedTopic);
+    console.log(topics.indexOf(savedTopic));
     topics.splice(topics.indexOf(savedTopic), 1);
     return topics;
 }

@@ -11,7 +11,7 @@ class TopicCreate extends Form {
             name: '',
             partition: 0,
             replication: 0,
-            cleanup: '',
+            cleanup: 'delete',
             retention: 0
         },
         errors: {}
@@ -26,7 +26,9 @@ class TopicCreate extends Form {
     };
 
     componentDidMount() {
-        this.setState({formData: this.props.location.state.formData})
+        if (this.props.location.state) {
+            this.setState({formData: this.props.location.state.formData});
+        }
     }
 
     onCleanupChange = value => {

@@ -20,7 +20,7 @@ class TopicList extends Tab {
             name: '',
             partition: 1,
             replication: 1,
-            cleanup: 'delete',
+            cleanup: 'delete', // TODO: delete default value not working
             retention: 86400000
         }
     };
@@ -42,7 +42,7 @@ class TopicList extends Tab {
 
     deleteTopic = () => {
         const {clusterId, topic} = this.state.deleteData;
-        deleteTopic(clusterId, topic._id);
+        deleteTopic(clusterId, topic.name);
         this.closeDeleteModal();
 
         this.props.history.push({

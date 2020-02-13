@@ -1,16 +1,35 @@
 import React, {Component} from 'react';
 import {Link} from "react-router-dom";
+import Dropdown from "react-bootstrap/Dropdown";
+import './topic.css';
+import {DateTime} from "react-datetime-bootstrap";
 
 // Adaptation of data.ftl
 
 class TopicData extends Component {
     state = {
-        partitions: [],
         sortBy: 'Oldest',
         sortOptions: [
             'Oldest',
             'Newest'
-        ]
+        ],
+        partition: 'All',
+        partitionOptions: [],
+        timestamp: ''
+    };
+
+    createPartitionOptions = partitions => {
+        console.log(this.props);
+        let partitionOptions = ['All'];
+        console.log(partitions);
+        for (let i = 0; i < partitions; i++) {
+            partitionOptions.push(`${i}`);
+        }
+        return partitionOptions;
+    };
+
+    onTimestampChange = timestamp => {
+        this.setState({timestamp});
     };
 
     renderSortOptions() {
@@ -19,18 +38,33 @@ class TopicData extends Component {
         let renderedOptions = [];
         for (let option of sortOptions) {
             renderedOptions.push(
-                <div>
-                    <Link key={option} className="dropdown-item" to="#">
-                        <i className="fa fa-fw fa-sort-numeric-desc" aria-hidden="true"/> options
-                    </Link>
-                </div>
+                <Dropdown.Item key={option}>
+                    <i className="fa fa-fw fa-sort-numeric-desc pull-left" aria-hidden="true"/> {option}
+                </Dropdown.Item>
+            );
+        }
+        return renderedOptions;
+    };
+
+    renderPartitionOptions = partitions => {
+        const partitionOptions = this.createPartitionOptions(partitions);
+        console.log(partitions);
+
+        let renderedOptions = [];
+        for (let option of partitionOptions) {
+            renderedOptions.push(
+                <Dropdown.Item key={option}>
+                    <i className="fa fa-fw pull-left" aria-hidden="true"/> {option}
+                </Dropdown.Item>
             );
         }
         return renderedOptions;
     };
 
     render() {
-        const {partitions, sortBy} = this.state;
+        const {sortBy, partition, timestamp} = this.state;
+        const {topic} = this.props;
+        console.log(topic);
 
         return (
             <React.Fragment>
@@ -53,63 +87,71 @@ class TopicData extends Component {
                     <div className="collapse navbar-collapse" id="topic-data">
                         <ul className="navbar-nav mr-auto">
                             <li className="nav-item dropdown">
-                                <Link className="nav-link dropdown-toggle"
-                                      to="#"
-                                      data-toggle="dropdown"
-                                      aria-haspopup="true"
-                                      aria-expanded="false">
-                                    <strong>Sort:</strong> ({sortBy})
-                                </Link>
-                                <div className="dropdown-menu">
-                                    {this.renderSortOptions()};
-                                    {/*<#list navbar["sort"]["values"] as k, v >
-                        <a className="dropdown-item" href="${k}">
-                            <i className="fa fa-fw fa-sort-numeric-desc" aria-hidden="true"></i> ${v?lower_case?cap_first}
-                        </a>
-                    </#list>*/}
-                                </div>
-                            </li>
-
-                            <li className="nav-item dropdown">
-                                <Link className="nav-link dropdown-toggle"
-                                      to="#"
-                                      role="button"
-                                      data-toggle="dropdown"
-                                      aria-haspopup="true"
-                                      aria-expanded="false">
-                                    <strong>Partition:</strong> {/*(${navbar["partition"]["current"].orElse("All")})*/}
-                                </Link>
-                                <div className="dropdown-menu">
-                                    {/*<#list navbar["partition"]["values"] as k, v >
-                        <Link className="dropdown-item" href="${k}">${v}</Link>
-                    </#list>*/}
-                                </div>
+                                <Dropdown>
+                                    <Dropdown.Toggle className="nav-link dropdown-toggle">
+                                        <strong>Sort:</strong> ({sortBy})
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                        {this.renderSortOptions()}
+                                    </Dropdown.Menu>
+                                </Dropdown>
                             </li>
                             <li className="nav-item dropdown">
-                                <Link className="nav-link dropdown-toggle"
-                                      to="#"
-                                      role="button"
-                                      data-toggle="dropdown"
-                                      aria-haspopup="true"
-                                      aria-expanded="false">
-                                    <strong>Timestamp:</strong>
-                                    {/*<#if navbar["timestamp"]["current"].isPresent()>(${navbar["timestamp"]["current"].get()?number_to_datetime?string.medium_short})</#if>*/}
-                                </Link>
-                                <div className="dropdown-menu khq-data-datetime">
-                                    <div className="input-group mb-2">
-                                        <input className="form-control"
-                                               name="timestamp"
-                                               type="text"
-                                        />
-                                        {/*<#if navbar["timestamp"]["current"].isPresent()>
-                               value="${navbar["timestamp"]["current"].get()?number_to_datetime?string.iso}"
-                               </#if> */}
-                                        <div className="input-group-append">
-                                            <button className="btn btn-primary" type="button">OK</button>
-                                        </div>
-                                    </div>
-                                    <div className="datetime-container"/>
-                                </div>
+                                {/*            <Link className="nav-link dropdown-toggle"*/}
+                                {/*                  to="#"*/}
+                                {/*                  role="button"*/}
+                                {/*                  data-toggle="dropdown"*/}
+                                {/*                  aria-haspopup="true"*/}
+                                {/*                  aria-expanded="false">*/}
+                                {/*                <strong>Partition:</strong> /!*(${navbar["partition"]["current"].orElse("All")})*!/*/}
+                                {/*            </Link>*/}
+                                {/*            <div className="dropdown-menu">*/}
+                                {/*                /!*<#list navbar["partition"]["values"] as k, v >*/}
+                                {/*    <Link className="dropdown-item" href="${k}">${v}</Link>*/}
+                                {/*</#list>*!/*/}
+                                {/*            </div>*/}
+                                <Dropdown>
+                                    <Dropdown.Toggle>
+                                        <strong>Partition:</strong> ({partition})
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                        {this.renderPartitionOptions(topic.partition)}
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </li>
+                            <li className="nav-item dropdown">
+                                {/* <Link className="nav-link dropdown-toggle"*/}
+                                {/*       to="#"*/}
+                                {/*       role="button"*/}
+                                {/*       data-toggle="dropdown"*/}
+                                {/*       aria-haspopup="true"*/}
+                                {/*       aria-expanded="false">*/}
+                                {/*     <strong>Timestamp:</strong>*/}
+                                {/*     /!*<#if navbar["timestamp"]["current"].isPresent()>(${navbar["timestamp"]["current"].get()?number_to_datetime?string.medium_short})</#if>*!/*/}
+                                {/* </Link>*/}
+                                {/* <div className="dropdown-menu khq-data-datetime">*/}
+                                {/*     <div className="input-group mb-2">*/}
+                                {/*         <input className="form-control"*/}
+                                {/*                name="timestamp"*/}
+                                {/*                type="text"*/}
+                                {/*         />*/}
+                                {/*         /!*<#if navbar["timestamp"]["current"].isPresent()>*/}
+                                {/*value="${navbar["timestamp"]["current"].get()?number_to_datetime?string.iso}"*/}
+                                {/*</#if> *!/*/}
+                                {/*         <div className="input-group-append">*/}
+                                {/*             <button className="btn btn-primary" type="button">OK</button>*/}
+                                {/*         </div>*/}
+                                {/*     </div>*/}
+                                {/*     <div className="datetime-container"/>*/}
+                                {/* </div>*/}
+                                <Dropdown>
+                                    <Dropdown.Toggle>
+                                        <strong>Timestamp:</strong> ({timestamp})
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                        <DateTime/>
+                                    </Dropdown.Menu>
+                                </Dropdown>
                             </li>
                             <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle"
